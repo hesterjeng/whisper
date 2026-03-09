@@ -62,19 +62,14 @@ list_devices() {
 record_until_keypress() {
     local tmpfile="/tmp/whisper-recording-$$.wav"
 
-    echo "Recording... Press 'q' to stop."
+    echo "Recording... Press Enter to stop."
 
     # Start recording in background (use system default device)
     arecord -f cd -t wav "$tmpfile" >/dev/null 2>&1 &
     local record_pid=$!
 
-    # Wait for 'q' key press
-    while true; do
-        read -n 1 -s key
-        if [ "$key" = "q" ]; then
-            break
-        fi
-    done
+    # Wait for Enter
+    read -r
 
     # Stop recording
     kill $record_pid 2>/dev/null
