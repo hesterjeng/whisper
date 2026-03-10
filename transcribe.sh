@@ -3,6 +3,7 @@
 
 MODEL="$HOME/Projects/whisper/models/ggml-base.bin"
 WHISPER="whisper-cli"
+LANG_FLAG="-l en"
 
 # Use the built-in DMIC by default
 pactl set-default-source alsa_input.pci-0000_07_00.6.HiFi__hw_acp__source 2>/dev/null
@@ -76,7 +77,7 @@ record_until_keypress() {
     wait $record_pid 2>/dev/null
 
     echo "Transcribing..."
-    TRANSCRIPTION=$($WHISPER -m "$MODEL" -f "$tmpfile" -nt -np 2>&1)
+    TRANSCRIPTION=$($WHISPER -m "$MODEL" $LANG_FLAG -f "$tmpfile" -nt -np 2>/dev/null)
     rm -f "$tmpfile"
 
     if [ -z "$TRANSCRIPTION" ] || [[ "$TRANSCRIPTION" == *"BLANK_AUDIO"* ]]; then
@@ -104,7 +105,7 @@ record_and_transcribe() {
 
     if [ $? -eq 0 ]; then
         echo "Transcribing..."
-        TRANSCRIPTION=$($WHISPER -m "$MODEL" -f "$tmpfile" -nt -np 2>&1)
+        TRANSCRIPTION=$($WHISPER -m "$MODEL" $LANG_FLAG -f "$tmpfile" -nt -np 2>/dev/null)
         rm -f "$tmpfile"
 
         if [ -z "$TRANSCRIPTION" ] || [[ "$TRANSCRIPTION" == *"BLANK_AUDIO"* ]]; then
@@ -136,7 +137,7 @@ transcribe_file() {
     fi
 
     echo "Transcribing $file..."
-    TRANSCRIPTION=$($WHISPER -m "$MODEL" -f "$file" -nt -np 2>&1)
+    TRANSCRIPTION=$($WHISPER -m "$MODEL" $LANG_FLAG -f "$file" -nt -np 2>/dev/null)
 
     if [ -z "$TRANSCRIPTION" ] || [[ "$TRANSCRIPTION" == *"BLANK_AUDIO"* ]]; then
         echo "Error: No audio detected"
